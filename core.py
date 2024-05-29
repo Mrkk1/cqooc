@@ -257,7 +257,6 @@ class Core:
         )
     
     def skip_section(self, section_id: str) -> dict:
-        self.__login_by_pwd()
     
         section_data = list(
             filter(
@@ -301,8 +300,8 @@ class Core:
             
             # 503
             if skip_res.status_code == 503:
-                print('503')
-                sleep(10)
+                print('503,拒绝访问,等待10秒')
+                sleep(15)
             else:
                 try:
                     qes = skip_res.json()
@@ -316,25 +315,28 @@ class Core:
             
                 
                 if status_code == 2:
-                    print(2)
+                    print("已经跳过该课程")
                     
                     return Msg().processing("已经跳过该课程", 200)
                 elif status_code == 0:
-                    print(3)
+                    print("跳过课程成功")
+
                     
                     return Msg().processing("跳过课程成功", 200)
                 elif status_code == 3:
                     
-                    print(4)
-                    
+                    print("小节被拒绝,等待5秒")
+                    sleep(5)  # Optional: add a delay between attempts
                     self.__login_by_pwd()
+
+                    
+                
                     attempts += 1
                     
                     
-                    sleep(3)  # Optional: add a delay between attempts
                     
                 else:
-                    print(5)
+                    print("跳过课程失败")
                     
                     return Msg().processing("跳过课程失败", 400)
             
